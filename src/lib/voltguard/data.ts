@@ -1,6 +1,5 @@
-import { create } from "zustand";
-
-// Lightweight pub/sub without zustand dependency
+// Lightweight pub/sub store (no external dep)
+import { useEffect, useState } from "react";
 export type SectorStatus = "operativo" | "riesgo" | "falla";
 export interface Sector {
   id: string;
@@ -82,9 +81,6 @@ export const store = {
   subscribe,
   notify,
 };
-
-// silence unused import
-void create;
 
 const rand = (min: number, max: number) => Math.random() * (max - min) + min;
 
@@ -179,7 +175,7 @@ export function setReportState(id: string, state: Report["state"]) {
 }
 
 export function useStore() {
-  const [, setN] = (require("react") as typeof import("react")).useState(0);
-  (require("react") as typeof import("react")).useEffect(() => store.subscribe(() => setN((n) => n + 1)), []);
+  const [, setN] = useState(0);
+  useEffect(() => store.subscribe(() => setN((n) => n + 1)), []);
   return store;
 }
