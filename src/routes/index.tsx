@@ -1,11 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { Toaster } from "@/components/ui/sonner";
 import { Activity, AlertTriangle, Bell, Bolt, BrainCircuit, CheckCircle2, ClipboardList, Cpu, Gauge, Lightbulb, MapPin, Radio, ShieldAlert, Wrench, Zap } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { store, tickRealtime, simulateEvent, useStore, setAlertState, setReportState, type Alert as AlertT } from "@/lib/voltguard/data";
-import { CampusMap } from "@/components/voltguard/CampusMap";
+import { GoogleCampusMap } from "@/components/voltguard/GoogleCampusMap";
 import { SensorCharts } from "@/components/voltguard/SensorCharts";
 import { ReportForm } from "@/components/voltguard/ReportForm";
+import { supabase } from "@/integrations/supabase/client";
+import type { Session } from "@supabase/supabase-js";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,6 +25,24 @@ export const Route = createFileRoute("/")({
 
 function VoltGuardApp() {
   useStore();
+  const navigate = useNavigate();
+  const [session, setSession] = useState<Session | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+      setSession(s);
+      setAuthChecked(true);
+      if (!s) navigate({ to: "/auth" });
+    });
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setAuthChecked(true);
+      if (!data.session) navigate({ to: "/auth" });
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [navigate]);
+
   useEffect(() => {
     const t1 = setInterval(tickRealtime, 3000);
     const t2 = setInterval(simulateEvent, 15000);
@@ -30,14 +52,19 @@ function VoltGuardApp() {
     };
   }, []);
 
+  if (!authChecked) {
+    return <div className="grid min-h-screen place-items-center text-sm text-muted-foreground">Cargando…</div>;
+  }
+  if (!session) return null;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/40 to-emerald-50/30 text-foreground">
       <Toaster position="top-right" richColors />
-      <Header />
+      <Header email={session.user.email ?? ""} />
       <main className="mx-auto max-w-7xl space-y-10 px-4 py-8 sm:px-6 lg:px-8">
         <KPIGrid />
         <Section icon={<MapPin className="h-5 w-5" />} title="Mapa Inteligente del Campus" subtitle="Estado en tiempo real de los sectores monitoreados">
-          <CampusMap />
+          <GoogleCampusMap />
         </Section>
         <div className="grid gap-6 lg:grid-cols-2">
           <Section icon={<BrainCircuit className="h-5 w-5" />} title="Predicción de Fallas" subtitle="Análisis IA basado en datos históricos y sensores">
@@ -66,7 +93,7 @@ function VoltGuardApp() {
   );
 }
 
-function Header() {
+function Header({ email }: { email: string }) {
   return (
     <header className="sticky top-0 z-30 border-b bg-white/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
@@ -79,9 +106,15 @@ function Header() {
             <p className="text-[11px] text-muted-foreground">Smart Campus UNMSM · Monitoreo Predictivo</p>
           </div>
         </div>
-        <div className="hidden items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 sm:flex">
-          <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" /></span>
-          Conexión IoT activa
+        <div className="flex items-center gap-2">
+          <div className="hidden items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 sm:flex">
+            <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" /></span>
+            IoT activo
+          </div>
+          {email && <span className="hidden text-xs text-muted-foreground md:inline">{email}</span>}
+          <button onClick={() => supabase.auth.signOut()} className="inline-flex items-center gap-1 rounded-md border bg-background px-2.5 py-1.5 text-xs font-medium hover:bg-muted" title="Cerrar sesión">
+            <LogOut className="h-3.5 w-3.5" /> Salir
+          </button>
         </div>
       </div>
     </header>
@@ -109,7 +142,7 @@ function KPIGrid() {
   const s = store;
   const cards = [
     { icon: Zap, label: "Voltaje promedio", value: `${s.kpis.voltage} V`, tone: "primary" },
-    { icon: Gauge, label: "Consumo actual", value: `${s.kpis.consumption.toLocaleString()} kWh`, tone: "accent" },
+    { icon: Gauge, label: "Consumo actual", value: `${s.kpis.consumption} kWh`, tone: "accent" },
     { icon: Lightbulb, label: "Luminarias operativas", value: `${s.kpis.luminaires}%`, tone: "success" },
     { icon: ShieldAlert, label: "Fallas detectadas", value: `${s.kpis.failures}`, tone: "danger" },
     { icon: AlertTriangle, label: "Alertas preventivas", value: `${s.kpis.preventiveAlerts}`, tone: "warning" },
