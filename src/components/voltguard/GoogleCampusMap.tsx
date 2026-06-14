@@ -26,9 +26,10 @@ const STATUS_LABEL: Record<Sector["status"], string> = {
   falla: "Falla Detectada",
 };
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
   interface Window {
-    google?: typeof google;
+    google?: any;
     initVoltMap?: () => void;
   }
 }
@@ -55,8 +56,8 @@ function loadMaps(): Promise<void> {
 export function GoogleCampusMap() {
   useStore();
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<Record<string, google.maps.Marker>>({});
+  const mapRef = useRef<any>(null);
+  const markersRef = useRef<Record<string, any>>({});
   const [selected, setSelected] = useState<string>("ing");
   const [error, setError] = useState<string | null>(null);
 
@@ -162,7 +163,7 @@ export function GoogleCampusMap() {
   );
 }
 
-function makeIcon(status: Sector["status"]): google.maps.Symbol {
+function makeIcon(status: Sector["status"]): any {
   return {
     path: window.google!.maps.SymbolPath.CIRCLE,
     scale: 10,
