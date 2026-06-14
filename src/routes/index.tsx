@@ -142,7 +142,7 @@ function KPIGrid() {
   const s = store;
   const cards = [
     { icon: Zap, label: "Voltaje promedio", value: `${s.kpis.voltage} V`, tone: "primary" },
-    { icon: Gauge, label: "Consumo actual", value: `${s.kpis.consumption.toLocaleString()} kWh`, tone: "accent" },
+    { icon: Gauge, label: "Consumo actual", value: `${s.kpis.consumption} kWh`, tone: "accent" },
     { icon: Lightbulb, label: "Luminarias operativas", value: `${s.kpis.luminaires}%`, tone: "success" },
     { icon: ShieldAlert, label: "Fallas detectadas", value: `${s.kpis.failures}`, tone: "danger" },
     { icon: AlertTriangle, label: "Alertas preventivas", value: `${s.kpis.preventiveAlerts}`, tone: "warning" },
