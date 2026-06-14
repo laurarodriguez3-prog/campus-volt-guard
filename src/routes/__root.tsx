@@ -77,14 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "VoltGuard" },
+      { name: "description", content: "VoltGuard is a smart campus web app for predictive electrical infrastructure monitoring." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "VoltGuard" },
+      { property: "og:description", content: "VoltGuard is a smart campus web app for predictive electrical infrastructure monitoring." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "VoltGuard" },
+      { name: "twitter:description", content: "VoltGuard is a smart campus web app for predictive electrical infrastructure monitoring." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/78833e43-e470-4d98-823e-850840d422b8/id-preview-5b5edf0c--02eae192-8232-4992-a1a9-ab4d0fdad640.lovable.app-1781463162399.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/78833e43-e470-4d98-823e-850840d422b8/id-preview-5b5edf0c--02eae192-8232-4992-a1a9-ab4d0fdad640.lovable.app-1781463162399.png" },
     ],
     links: [
       {
