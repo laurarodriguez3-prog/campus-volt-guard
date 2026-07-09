@@ -10,6 +10,9 @@ import { SensorCharts } from "@/components/voltguard/SensorCharts";
 import { ReportForm } from "@/components/voltguard/ReportForm";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
+import unmsmLogo from "@/assets/unmsm-logo.png.asset.json";
+import citeLogo from "@/assets/cite-logo.png.asset.json";
+import heroImg from "@/assets/hero.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -62,6 +65,7 @@ function VoltGuardApp() {
       <Toaster position="top-right" richColors />
       <Header email={session.user.email ?? ""} />
       <main className="mx-auto max-w-7xl space-y-10 px-4 py-8 sm:px-6 lg:px-8">
+        <HeroBanner />
         <KPIGrid />
         <Section icon={<MapPin className="h-5 w-5" />} title="Mapa Inteligente del Campus" subtitle="Estado en tiempo real de los sectores monitoreados">
           <GoogleCampusMap />
@@ -86,10 +90,38 @@ function VoltGuardApp() {
           </Section>
         </div>
         <footer className="border-t pt-6 text-center text-xs text-muted-foreground">
-          VoltGuard · Smart Campus UNMSM · Simulación con IoT + IA + Participación Ciudadana
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex items-center gap-6 opacity-80">
+              <img src={unmsmLogo.url} alt="UNMSM" className="h-10 w-auto object-contain" loading="lazy" />
+              <img src={citeLogo.url} alt="CITE" className="h-10 w-auto object-contain" loading="lazy" />
+            </div>
+            <p>VoltGuard · Smart Campus UNMSM · Simulación con IoT + IA + Participación Ciudadana</p>
+          </div>
         </footer>
       </main>
     </div>
+  );
+}
+
+function HeroBanner() {
+  return (
+    <section className="relative overflow-hidden rounded-3xl border shadow-xl">
+      <img src={heroImg.url} alt="Smart campus VoltGuard" className="h-56 w-full object-cover sm:h-72 md:h-80" width={1600} height={700} />
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-950/90 via-blue-900/70 to-transparent" />
+      <div className="absolute inset-0 flex flex-col justify-between p-6 sm:p-10">
+        <div className="flex items-center gap-3">
+          <div className="rounded-xl bg-white/95 p-2 shadow"><img src={unmsmLogo.url} alt="UNMSM" className="h-9 w-auto object-contain" /></div>
+          <div className="rounded-xl bg-white/95 p-2 shadow"><img src={citeLogo.url} alt="CITE" className="h-9 w-auto object-contain" /></div>
+        </div>
+        <div className="max-w-2xl text-white">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/90 px-3 py-1 text-[11px] font-bold uppercase tracking-wider shadow">
+            <Bolt className="h-3 w-3" /> Sistema activo · datos en vivo
+          </span>
+          <h2 className="mt-3 text-2xl font-black leading-tight sm:text-4xl">Ciudad Universitaria UNMSM<br/><span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">bajo monitoreo predictivo</span></h2>
+          <p className="mt-2 max-w-lg text-sm text-white/85 sm:text-base">Detección temprana de fallas eléctricas mediante sensores IoT, inteligencia artificial y reportes ciudadanos.</p>
+        </div>
+      </div>
+    </section>
   );
 }
 
