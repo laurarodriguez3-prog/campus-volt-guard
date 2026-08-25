@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Bolt } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
+
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import unmsmLogo from "@/assets/unmsm-logo.png.asset.json";
@@ -54,10 +54,6 @@ function AuthPage() {
     }
   };
 
-  const handleGoogle = async () => {
-    const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (res.error) toast.error("Google no disponible", { description: String((res.error as Error)?.message ?? res.error) });
-  };
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
